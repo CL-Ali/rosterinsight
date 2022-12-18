@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "297702473904",
+    "project_id": "rosterinsight",
+    "storage_bucket": "rosterinsight.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:297702473904:android:118252245ab0f7913dfb75",
+        "android_client_info": {
+          "package_name": "com.example.rosterinsight"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "297702473904-gseobg5bgr9ndf40i5cfe3htdubg1fvv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3d6KrjBRcne-dUiwcMyDU7HPe1wbXvDE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "297702473904-gseobg5bgr9ndf40i5cfe3htdubg1fvv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
