@@ -31,6 +31,7 @@ class _CreateHolidayScreenState extends State<CreateHolidayScreen> {
   // DateFormat dateFormat = DateFormat('dd/MM/yyyy ').add_Hm();
   TextEditingController narrationController = TextEditingController();
   String narration = '';
+  bool isProcessing = false;
   void dateTimePicker({double? height, bool? isStart}) {
     DatePicker.showDatePicker(context,
         theme: DatePickerTheme(
@@ -280,6 +281,9 @@ class _CreateHolidayScreenState extends State<CreateHolidayScreen> {
                 onPressed: checkDateAndTimeRange(fromDate, toDate) < 0
                     ? null
                     : () async {
+                        setState(() {
+                          isProcessing = true;
+                        });
                         Holiday holiday = Holiday()
                           ..holidayType = selectedHoliday.holidayName
                           ..holidayTypeId = selectedHoliday.holidayId
@@ -300,31 +304,42 @@ class _CreateHolidayScreenState extends State<CreateHolidayScreen> {
                           holiday.holidayId = widget.editHoliday!.holidayId;
                           msg = await ApiCall.apiForEditHoliday(holiday);
                         }
-                        await exceptionSnackBar(msg);
+                        bool isNoError = await exceptionSnackBar(msg);
+                        if (isNoError) {
+                          setState(() {
+                            selectedHoliday = HolidayType(
+                              holidayName: 'Select Holiday',
+                            );
+                            narration = '';
+                            narrationController.clear();
+
+                            fromDate = 'Select Date';
+                            toDate = 'Select Date';
+                            widget.isEdit = false;
+                          });
+
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => (MyNavigationScreen(
+                                        index: 2,
+                                      ))));
+                        }
+
                         setState(() {
-                          selectedHoliday = HolidayType(
-                            holidayName: 'Select Holiday',
-                          );
-                          narration = '';
-                          narrationController.clear();
-
-                          fromDate = 'Select Date';
-                          toDate = 'Select Date';
-                          widget.isEdit = false;
+                          isProcessing = false;
                         });
-
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => (MyNavigationScreen(
-                                      index: 2,
-                                    ))));
                       },
                 // isExtended: true,
                 // enableFeedback: true,
-                child: Text(widget.isEdit == null || !widget.isEdit!
-                    ? 'Save'
-                    : 'Update')),
+                child: isProcessing
+                    ? const CircularProgressIndicator(
+                        strokeWidth: 3,
+                        color: Colors.white,
+                      )
+                    : Text(widget.isEdit == null || !widget.isEdit!
+                        ? 'Save'
+                        : 'Update')),
           ]),
         ),
       ),

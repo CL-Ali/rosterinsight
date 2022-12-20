@@ -15,7 +15,7 @@ class ChangePasswordScreen extends StatefulWidget {
 }
 
 class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
-  bool isComplete = false;
+  bool isFieldFull = false;
   bool isPasswordChange = false;
   TextEditingController _confirmPassword = TextEditingController();
   TextEditingController _password = TextEditingController();
@@ -26,8 +26,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   isFieldNotEmpty() {
     setState(() {
-      isComplete = confirmPassword != "" && password != "";
+      isFieldFull = confirmPassword != "" && password != "";
     });
+  }
+
+  @override
+  void initState() {
+    isFieldNotEmpty();
+    super.initState();
   }
 
   @override
@@ -84,6 +90,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                     setState(() {
                                       password = value;
                                     });
+                                    isFieldNotEmpty();
                                   },
                                   cursorColor: primaryColor,
                                   obscureText: isShow,
@@ -102,6 +109,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                     setState(() {
                                       confirmPassword = value;
                                     });
+                                    isFieldNotEmpty();
                                   },
                                   cursorColor: primaryColor,
                                   decoration: InputDecoration(
@@ -148,7 +156,8 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                       BorderRadius.all(Radius.circular(25.0))),
                               disabledColor: Colors.grey,
                               disabledTextColor: Colors.white,
-                              onPressed: isComplete
+                              onPressed: !isFieldFull ||
+                                      password != confirmPassword
                                   ? null
                                   : () async {
                                       setState(() {
@@ -158,20 +167,16 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                         String isValid =
                                             await ApiCall.apiForChangePassword(
                                                 password: password);
-                                        await UserSharePreferences.setLoginStts(
-                                            true);
+                                        bool response =
+                                            await exceptionSnackBar(isValid);
+                                        if (response) {
+                                          await UserSharePreferences
+                                              .setLoginStts(true);
 
-                                        setState(() {
-                                          isPasswordChange = false;
-                                        });
-                                        if (isValid.toLowerCase() == "true") {
+                                          setState(() {
+                                            isPasswordChange = false;
+                                          });
                                           Get.to(MyNavigationScreen());
-                                        } else {
-                                          isValid = isValid
-                                              .split(', ')
-                                              .last
-                                              .split(' ')
-                                              .first;
                                         }
                                       }
                                     },

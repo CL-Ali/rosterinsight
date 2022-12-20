@@ -19,12 +19,12 @@ class UserSharePreferences {
   static Future init() async => prefs = await SharedPreferences.getInstance();
   static Future setEmployeeId(String id) async =>
       await prefs.setString(eId, id);
-  static String getEmployeeId() => prefs.getString(eId) ?? "0000";
+  static String getEmployeeId() => prefs.getString(eId) ?? "0002";
   static Future setBusinessId(int id) async => await prefs.setInt(bId, id);
-  static int getBusinessId() => prefs.getInt(bId) ?? 0;
+  static int getBusinessId() => prefs.getInt(bId) ?? 1;
   static Future setName(String mail) async =>
       await prefs.setString(email, mail);
-  static String getName() => prefs.getString(email) ?? "";
+  static String getName() => prefs.getString(email) ?? "ahsanakram99@gmail.com";
   static Future setLoginStts(bool islogin) async =>
       await prefs.setBool(isLogined, islogin);
   static bool getLoginStts() => prefs.getBool(isLogined) ?? false;

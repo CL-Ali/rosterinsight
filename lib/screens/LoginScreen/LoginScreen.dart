@@ -12,12 +12,13 @@ import 'package:rosterinsight/services/Api_Call_Service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
+  static bool isDirectLogin = false;
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  bool isComplete = false;
+  bool isFieldFull = false;
   TextEditingController _businessID = TextEditingController();
   TextEditingController _employeeID = TextEditingController();
   TextEditingController _password = TextEditingController();
@@ -28,8 +29,14 @@ class _LoginScreenState extends State<LoginScreen> {
   bool isShow = true;
   isFieldNotEmpty() {
     setState(() {
-      isComplete = businessID != 0 && employeeID != "" && password != "";
+      isFieldFull = businessID != 0 && employeeID != "" && password != "";
     });
+  }
+
+  @override
+  void initState() {
+    isFieldNotEmpty();
+    super.initState();
   }
 
   @override
@@ -93,9 +100,12 @@ class _LoginScreenState extends State<LoginScreen> {
                                 TextField(
                                   controller: _businessID,
                                   onChanged: (value) {
-                                    setState(() {
-                                      businessID = int.parse(value);
-                                    });
+                                    if (value.isNotEmpty) {
+                                      setState(() {
+                                        businessID = int.parse(value);
+                                      });
+                                    }
+                                    isFieldNotEmpty();
                                     print("your businessID is $value");
                                   },
                                   cursorColor: primaryColor,
@@ -112,6 +122,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     setState(() {
                                       employeeID = value;
                                     });
+                                    isFieldNotEmpty();
                                   },
                                   cursorColor: primaryColor,
                                   decoration: InputDecoration(
@@ -127,6 +138,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     setState(() {
                                       password = value;
                                     });
+                                    isFieldNotEmpty();
                                   },
                                   cursorColor: primaryColor,
                                   obscureText: isShow,
@@ -162,7 +174,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                       BorderRadius.all(Radius.circular(25.0))),
                               disabledColor: Colors.grey,
                               disabledTextColor: Colors.white,
-                              onPressed: isComplete
+                              onPressed: !isFieldFull
                                   ? null
                                   : () async {
                                       setState(() {
@@ -173,22 +185,20 @@ class _LoginScreenState extends State<LoginScreen> {
                                               employeeId: employeeID,
                                               businessId: businessID,
                                               password: password);
+                                      bool response =
+                                          await exceptionSnackBar(isValid);
                                       setState(() {
                                         isLoginUserValid = false;
                                       });
-                                      if (isValid.toLowerCase() == "true") {
+                                      if (response) {
                                         await UserSharePreferences
                                             .setBusinessId(businessID);
                                         await UserSharePreferences
                                             .setEmployeeId(employeeID);
 
-                                        Get.to(ChangePasswordScreen());
-                                      } else {
-                                        isValid = isValid
-                                            .split(', ')
-                                            .last
-                                            .split(' ')
-                                            .first;
+                                        Get.to(LoginScreen.isDirectLogin
+                                            ? MyNavigationScreen()
+                                            : ChangePasswordScreen());
                                       }
                                     },
                               minWidth: double.infinity,

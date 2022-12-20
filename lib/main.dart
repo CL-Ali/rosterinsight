@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
-import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+// import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 import 'package:rosterinsight/MainComponents/constant.dart';
@@ -13,32 +13,32 @@ import 'package:rosterinsight/screens/LoginScreen/LoginScreen.dart';
 import 'package:rosterinsight/screens/NavigationScreens/MyNavigationScreen.dart';
 import 'package:rosterinsight/screens/RegistrationScreen/RegisterationScreen.dart';
 import 'package:rosterinsight/services/Api_Call_Service.dart';
-import 'package:workmanager/workmanager.dart';
+// import 'package:workmanager/workmanager.dart';
 
-final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-    FlutterLocalNotificationsPlugin();
-@pragma('vm:entry-point')
-void callbackDispatcher() {
-  Workmanager().executeTask((task, inputData) {
-    print("Native called background task");
-    return Future.value(true);
-  });
-}
+// final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+//     FlutterLocalNotificationsPlugin();
+// @pragma('vm:entry-point')
+// void callbackDispatcher() {
+//   Workmanager().executeTask((task, inputData) {
+//     print("Native called background task");
+//     return Future.value(true);
+//   });
+// }
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await UserSharePreferences.init();
-  Workmanager().initialize(
-    callbackDispatcher,
-    isInDebugMode: true,
-  );
-  Workmanager().registerPeriodicTask(
-    "periodic-task-identifier",
-    "simplePeriodicTask",
-    frequency: Duration(minutes: 15),
-  );
-  Workmanager().registerOneOffTask("task-identifier", "simpleTask");
+  // Workmanager().initialize(
+  //   callbackDispatcher,
+  //   isInDebugMode: true,
+  // );
+  // Workmanager().registerPeriodicTask(
+  //   "periodic-task-identifier",
+  //   "simplePeriodicTask",
+  //   frequency: Duration(minutes: 15),
+  // );
+  // Workmanager().registerOneOffTask("task-identifier", "simpleTask");
   runApp(GetMaterialApp(
     debugShowCheckedModeBanner: false,
     darkTheme: ThemeData(
@@ -82,14 +82,14 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    Notify.initialize(flutterLocalNotificationsPlugin);
+    // Notify.initialize(flutterLocalNotificationsPlugin);
     preload();
   }
 
-  void notificationTapBackground() =>
-      Notify.onNotification.stream.listen(onClickNotification);
-  void onClickNotification(String? payload) => Navigator.push(
-      context, MaterialPageRoute(builder: (context) => LoginScreen()));
+  // void notificationTapBackground() =>
+  //     Notify.onNotification.stream.listen(onClickNotification);
+  // void onClickNotification(String? payload) => Navigator.push(
+  //     context, MaterialPageRoute(builder: (context) => LoginScreen()));
   bool isLogin = UserSharePreferences.getLoginStts();
   @override
   Widget build(BuildContext context) {

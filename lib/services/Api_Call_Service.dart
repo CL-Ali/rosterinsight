@@ -39,10 +39,9 @@ class ApiCall {
     );
 
     if (response.statusCode == 200) {
-      var body = jsonDecode(response.body);
-      return body['message'].toString();
+      return response.body;
     } else {
-      return jsonDecode(response.body)['message'];
+      return response.body;
     }
   }
 
@@ -75,10 +74,9 @@ class ApiCall {
     );
 
     if (response.statusCode == 200) {
-      var body = jsonDecode(response.body);
-      return body['success'].toString();
+      return response.body;
     } else {
-      return "Error found ,${response.statusCode} code";
+      return response.body;
     }
   }
 
@@ -110,10 +108,9 @@ class ApiCall {
     );
 
     if (response.statusCode == 200) {
-      var body = jsonDecode(response.body);
-      return body['success'].toString();
+      return response.body;
     } else {
-      return "Error found ,${response.statusCode} code";
+      return response.body;
     }
   }
 

@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -41,14 +43,15 @@ class _SiteBookingScreenState extends State<SiteBookingScreen> {
       .parse(DateFormat('dd/MM/yyyy').format(DateTime.now()));
   DateTime toDate = DateFormat('dd/MM/yyyy')
       .parse(DateFormat('dd/MM/yyyy').format(DateTime.now()));
+  bool isProcessing = false;
   bool isFilter = false;
   List<Booking> searchList = [];
   void filterList(String value) {
     setState(() {
+      filterSiteDetail = [];
       if (value.isEmpty) {
         isFilter = false;
       } else {
-        filterSiteDetail = [];
         searchList.forEach((element) {
           if (element.site!.toLowerCase().contains(value))
             filterSiteDetail.add(element);
@@ -81,9 +84,9 @@ class _SiteBookingScreenState extends State<SiteBookingScreen> {
     }, currentTime: DateTime.now(), locale: LocaleType.en);
   }
 
-  List<Booking> tEmployeeDetail = [];
   Future<List<Booking>> dateFilter(String from, String to) async {
     List<Booking> temployeeDetail = [];
+    List<Booking> tEmployeeDetail = [];
 
     temployeeDetail = await ApiCall.apiForGetBooking(
         isSearchDateRange: true,
@@ -92,55 +95,59 @@ class _SiteBookingScreenState extends State<SiteBookingScreen> {
         toDate:
             "${DateFormat('yyyy-MM-dd').format(DateFormat('dd/MM/yyyy').parse(to))}T00:00:00");
     int dif = checkDateRange(from, to);
-    tEmployeeDetail = temployeeDetail;
     print(dif);
-    for (int i = 0; i < tEmployeeDetail.length; i++) {
-      if ((checkDateRange(from, tEmployeeDetail[i].sdate!) >= 0 &&
-              checkDateRange(tEmployeeDetail[i].sdate!, to) >= 0) &&
-          dif >= 0) {
-        Booking employeeBooking = Booking()
-          ..site = tEmployeeDetail[i].site
-          ..sdate = tEmployeeDetail[i].sdate
-          ..startTime = tEmployeeDetail[i].startTime
-          ..endTime = tEmployeeDetail[i].endTime;
-        temployeeDetail.add(employeeBooking);
+    for (int i = 0; i < temployeeDetail.length; i++) {
+      bool isInRange = (checkDateRange(from, temployeeDetail[i].sdate!) >= 0 &&
+              checkDateRange(temployeeDetail[i].sdate!, to) >= 0) &&
+          dif >= 0;
+      if (isInRange) {
+        // Booking employeeBooking =
+        // Booking()
+        // ..site = tEmployeeDetail[i].site
+        // ..sdate = tEmployeeDetail[i].sdate
+        // ..startTime = tEmployeeDetail[i].startTime
+        // ..endTime = tEmployeeDetail[i].endTime;
+        // temployeeDetail.add(employeeBooking);
+        tEmployeeDetail.add(temployeeDetail[i]);
       }
     }
 
-    setState(() {
-      if (temployeeDetail.length > 1) {
-        for (int j = 0; j < temployeeDetail.length - 1; j++) {
-          for (int i = 0; i < temployeeDetail.length - 1; i++) {
-            if (dateFormat
-                .parse(temployeeDetail[i].sdate!)
-                .isAfter(dateFormat.parse(temployeeDetail[i + 1].sdate!))) {
-              Booking temp;
-              temp = temployeeDetail[i];
-              temployeeDetail[i] = temployeeDetail[i + 1];
-              temployeeDetail[i + 1] = temp;
-            }
+    if (tEmployeeDetail.length > 1) {
+      for (int j = 0; j < tEmployeeDetail.length - 1; j++) {
+        for (int i = 0; i < tEmployeeDetail.length - 1; i++) {
+          if (dateFormat
+              .parse(tEmployeeDetail[i].sdate!)
+              .isAfter(dateFormat.parse(tEmployeeDetail[i + 1].sdate!))) {
+            Booking temp;
+            temp = tEmployeeDetail[i];
+            tEmployeeDetail[i] = tEmployeeDetail[i + 1];
+            tEmployeeDetail[i + 1] = temp;
           }
         }
       }
+    }
+    setState(() {
       isFilter = true;
     });
-    return temployeeDetail;
+    return tEmployeeDetail;
   }
 
   separateGrpName(List<Booking> tList) {
+    mapofgrpList = {};
     tList.forEach((element) {
-      if (!mapofgrpList.containsKey(element.site)) {
+      if (!mapofgrpList.containsValue(element.site)) {
         mapofgrpList[element.site] = 1;
       } else {
         mapofgrpList[element.site] += 1;
       }
     });
+    nameOfSite = [];
     mapofgrpList.forEach(
       (key, value) {
         nameOfSite.add(key.toString());
+        print(value.toString());
       },
     );
-    print(nameOfSite[0]);
   }
 
   int count = 0;
@@ -159,6 +166,7 @@ class _SiteBookingScreenState extends State<SiteBookingScreen> {
   }
 
   forSearching(List booking) {
+    searchList = [];
     booking.forEach((element) {
       if (element.length > 1) {
         element.forEach((subelement) {
@@ -174,6 +182,8 @@ class _SiteBookingScreenState extends State<SiteBookingScreen> {
   preload({bool? isSearch, List<Booking>? list}) async {
     isSearch = isSearch ?? false;
     List<Booking> tList = [];
+    booking = [];
+    nameOfSite = [];
 
     if (!isSearch) {
       tList = await ApiCall.apiForGetBooking(isSearchDateRange: false);
@@ -189,14 +199,26 @@ class _SiteBookingScreenState extends State<SiteBookingScreen> {
           .format(DateTime(now.year, now.month + 1, 0)));
       if (tList.isNotEmpty) {
         separateGrpName(tList);
+        count = 0;
         makeListbyGrp(tList);
         forSearching(booking);
         print(booking);
         booking;
         isAllDataGet = true;
       }
+
+      isProcessing = false;
       isLoading = false;
     });
+  }
+
+  void rebuildAllChildren(BuildContext context) {
+    void rebuild(Element el) {
+      el.markNeedsBuild();
+      el.visitChildren(rebuild);
+    }
+
+    (context as Element).visitChildren(rebuild);
   }
 
   @override
@@ -301,21 +323,39 @@ class _SiteBookingScreenState extends State<SiteBookingScreen> {
                         Expanded(
                           flex: 2,
                           child: ElevatedButton(
-                            onPressed: checkDateRange(fromdate, todate) < 0
+                            onPressed: checkDateRange(fromdate, todate) < 0 ||
+                                    isProcessing
                                 ? null
                                 : () async {
+                                    setState(() {
+                                      isProcessing = true;
+                                    });
                                     filterEmployeeDetail = await dateFilter(
                                         fromdate.toString(), todate.toString());
+
                                     await preload(
                                         isSearch: true,
                                         list: filterEmployeeDetail);
-                                    build(context);
+                                    setState(() {
+                                      isFilter = true;
+                                      isFilter = false;
+                                    });
                                   },
-                            child: const Text(
-                              'Fetch',
-                              style:
-                                  TextStyle(fontSize: 13, color: Colors.white),
-                            ),
+                            child: isProcessing
+                                ? SizedBox(
+                                    height: 17,
+                                    width: 17,
+                                    child: const CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      // value: 12,
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : const Text(
+                                    'Fetch',
+                                    style: TextStyle(
+                                        fontSize: 13, color: Colors.white),
+                                  ),
                           ),
                         ),
                       ]),
@@ -399,6 +439,7 @@ class _SiteBookingScreenState extends State<SiteBookingScreen> {
                             }))),
                           )
                         : Padding(
+                            key: ObjectKey(booking),
                             padding: const EdgeInsets.all(2.0),
                             child: Column(
                                 children:

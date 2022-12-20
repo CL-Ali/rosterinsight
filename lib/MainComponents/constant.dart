@@ -15,17 +15,20 @@ void customNavigate(Widget widget, context) {
       MaterialPageRoute(builder: (context) => widget), (route) => false);
 }
 
-Future<bool> exceptionSnackBar(msg) async {
+Future<bool> exceptionSnackBar(msg, {bool? isAuthentication}) async {
   var response = {};
   bool isSuccess = false;
   response = jsonDecode(msg);
+  isAuthentication = isAuthentication ?? false;
   if (response.isNotEmpty) {
     if (response['success']) {
       Get.rawSnackbar(
         snackPosition: SnackPosition.TOP,
         isDismissible: true,
         snackStyle: SnackStyle.GROUNDED,
-        message: response['message'],
+        message: isAuthentication
+            ? response['success'].toString()
+            : response['message'],
         // borderRadius: 10,
         // colorText: Colors.white,
         backgroundColor: successColor,

@@ -8,6 +8,7 @@ import 'package:rosterinsight/MainComponents/constant.dart';
 import 'package:rosterinsight/MainComponents/sharePreferences.dart';
 
 import 'package:rosterinsight/screens/LoginScreen/LoginScreen.dart';
+import 'package:rosterinsight/screens/NavigationScreens/MyNavigationScreen.dart';
 import 'package:rosterinsight/services/Api_Call_Service.dart';
 
 class RegisterationScreen extends StatefulWidget {
@@ -268,28 +269,38 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                                                     email: email,
                                                     token: otp,
                                                     isOtpSend: false);
-                                            print(password);
-                                            await UserSharePreferences.setName(
-                                                email);
 
-                                            setState(() {
-                                              isOtpValid = false;
-                                            });
-                                            if (password.length < 10) {
-                                              Navigator.pushAndRemoveUntil(
-                                                  context,
-                                                  MaterialPageRoute(
-                                                      builder: (context) =>
-                                                          LoginScreen()),
-                                                  (route) => false);
+                                            var isValid =
+                                                await exceptionSnackBar(
+                                                    password,
+                                                    isAuthentication: true);
+                                            if (isValid) {
+                                              await UserSharePreferences
+                                                  .setName(email);
+
+                                              setState(() {
+                                                isOtpValid = false;
+                                              });
+                                              var response =
+                                                  jsonDecode(password);
+                                              password = response['message'];
+                                              if (password.length < 7) {
+                                                LoginScreen.isDirectLogin =
+                                                    false;
+                                                Navigator.pushAndRemoveUntil(
+                                                    context,
+                                                    MaterialPageRoute(
+                                                        builder: (context) =>
+                                                            LoginScreen()),
+                                                    (route) => false);
+                                              }
                                             } else {
-                                              password = password
-                                                  .split(', ')
-                                                  .last
-                                                  .split(' ')
-                                                  .first;
+                                              setState(() {
+                                                setState(() {
+                                                  isOtpValid = false;
+                                                });
+                                              });
                                             }
-                                            print(password);
                                           } catch (e) {
                                             print(e.toString());
                                           }
@@ -362,14 +373,17 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                                                     email: email,
                                                     token: "",
                                                     isOtpSend: true);
-                                            otp = code;
-                                            setState(() {
-                                              whichMenuSelect == 'otp';
-                                              isEmailSending = false;
-                                              RegisterationScreen.isComplete =
-                                                  true;
-                                            });
-                                            setState(() {
+                                            var isValid =
+                                                await exceptionSnackBar(code,
+                                                    isAuthentication: true);
+                                            if (isValid) {
+                                              // otp = code;
+                                              setState(() {
+                                                whichMenuSelect == 'otp';
+                                                isEmailSending = false;
+                                                RegisterationScreen.isComplete =
+                                                    true;
+                                              });
                                               RegisterationScreen
                                                   .selectedOption = 2;
                                               whichMenuSelect = menuOptions[
@@ -378,7 +392,11 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                                                       1];
 
                                               // build(context);
-                                            });
+                                            } else {
+                                              setState(() {
+                                                isEmailSending = false;
+                                              });
+                                            }
                                           } catch (e) {
                                             setState(() {
                                               isErrorDuringSending = true;
@@ -398,6 +416,31 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                                           "Send OTP",
                                           style: TextStyle(color: Colors.white),
                                         )),
+                              SizedBox(
+                                height: size.height / 35,
+                              ),
+                              Center(
+                                child: Text('Or'),
+                              ),
+                              SizedBox(
+                                height: size.height / 35,
+                              ),
+                              MaterialButton(
+                                  shape: const RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(25.0))),
+                                  disabledColor: Colors.grey,
+                                  disabledTextColor: Colors.white,
+                                  onPressed: () {
+                                    Get.off(MyNavigationScreen());
+                                  },
+                                  minWidth: double.infinity,
+                                  height: 40,
+                                  color: primaryColor,
+                                  child: const Text(
+                                    "Demo Test",
+                                    style: TextStyle(color: Colors.white),
+                                  )),
                             ],
                           ),
                         ),
@@ -413,7 +456,8 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                             TextButton.styleFrom(foregroundColor: primaryColor),
                         child: Text("Sign In Here"),
                         onPressed: () async {
-                          RegisterationScreen.selectedOption = 1;
+                          RegisterationScreen.selectedOption = 2;
+                          LoginScreen.isDirectLogin = true;
                           Get.to(LoginScreen());
                         },
                       ),
