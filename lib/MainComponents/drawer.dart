@@ -20,11 +20,38 @@ class _MyDrawerState extends State<MyDrawer> {
         child: Column(
       children: [
         DrawerHeader(
-            child: Center(
-          child: Text(
-            'RosterInsight',
-            style: TextStyle(fontSize: 28, color: textColor),
-          ),
+            child: Column(
+          children: [
+            Stack(
+              alignment: AlignmentDirectional.topEnd,
+              children: const [
+                CircleAvatar(
+                  radius: 40,
+                  backgroundColor: Colors.grey,
+                ),
+                Badge(
+                  smallSize: 20,
+                  backgroundColor: Colors.green,
+                ),
+                // CircleAvatar(
+                //   radius: 10,
+                //   backgroundColor: Colors.green,
+                // ),
+              ],
+            ),
+            Center(
+              child: Text(
+                UserSharePreferences.getName(),
+                style: TextStyle(fontSize: 28, color: textColor),
+              ),
+            ),
+            Center(
+              child: Text(
+                UserSharePreferences.getEmail(),
+                style: TextStyle(fontSize: 15, color: textColor),
+              ),
+            ),
+          ],
         )),
         // MaterialButton(
         //   onPressed: () {

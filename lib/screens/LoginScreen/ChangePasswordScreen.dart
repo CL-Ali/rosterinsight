@@ -184,9 +184,14 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                               height: 40,
                               color: primaryColor,
                               child: isPasswordChange
-                                  ? const CircularProgressIndicator(
-                                      strokeWidth: 3,
-                                      color: Colors.white,
+                                  ? SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: const CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        // value: 12,
+                                        color: Colors.white,
+                                      ),
                                     )
                                   : const Text(
                                       "Change Password",

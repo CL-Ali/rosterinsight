@@ -276,8 +276,10 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                                                     isAuthentication: true);
                                             if (isValid) {
                                               await UserSharePreferences
-                                                  .setName(email);
+                                                  .setEmail(email);
 
+                                              await UserSharePreferences
+                                                  .setName(name);
                                               setState(() {
                                                 isOtpValid = false;
                                               });
@@ -309,9 +311,15 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                                   height: 40,
                                   color: primaryColor,
                                   child: isOtpValid
-                                      ? const CircularProgressIndicator(
-                                          strokeWidth: 3,
-                                          color: Colors.white,
+                                      ? SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child:
+                                              const CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            // value: 12,
+                                            color: Colors.white,
+                                          ),
                                         )
                                       : const Text(
                                           "Verify",
@@ -408,9 +416,15 @@ class _RegisterationScreenState extends State<RegisterationScreen> {
                                   height: 40,
                                   color: primaryColor,
                                   child: isEmailSending
-                                      ? const CircularProgressIndicator(
-                                          strokeWidth: 3,
-                                          color: Colors.white,
+                                      ? SizedBox(
+                                          height: 20,
+                                          width: 20,
+                                          child:
+                                              const CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            // value: 12,
+                                            color: Colors.white,
+                                          ),
                                         )
                                       : const Text(
                                           "Send OTP",

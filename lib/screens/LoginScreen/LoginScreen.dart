@@ -12,7 +12,7 @@ import 'package:rosterinsight/services/Api_Call_Service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
-  static bool isDirectLogin = false;
+  static bool isDirectLogin = true;
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
@@ -205,9 +205,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               height: 40,
                               color: primaryColor,
                               child: isLoginUserValid
-                                  ? const CircularProgressIndicator(
-                                      strokeWidth: 3,
-                                      color: Colors.white,
+                                  ? SizedBox(
+                                      height: 20,
+                                      width: 20,
+                                      child: const CircularProgressIndicator(
+                                        strokeWidth: 2,
+                                        // value: 12,
+                                        color: Colors.white,
+                                      ),
                                     )
                                   : const Text(
                                       "Login",
@@ -226,6 +231,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 child: Text("Sign Up Here"),
                                 onPressed: () async {
                                   RegisterationScreen.selectedOption = 1;
+                                  LoginScreen.isDirectLogin = false;
                                   Get.to(RegisterationScreen());
                                 },
                               ),

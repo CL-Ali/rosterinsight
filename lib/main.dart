@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:math';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
@@ -27,7 +28,15 @@ import 'package:rosterinsight/services/Api_Call_Service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
+  FirebaseOptions options = FirebaseOptions(
+      apiKey: 'AIzaSyD3d6KrjBRcne-dUiwcMyDU7HPe1wbXvDE',
+      appId: 'com.example.rosterinsight',
+      messagingSenderId:
+          '297702473904-gseobg5bgr9ndf40i5cfe3htdubg1fvv.apps.googleusercontent.com',
+      projectId: 'rosterinsight');
+  var firebase = await Firebase.initializeApp(
+    options: options,
+  );
   await UserSharePreferences.init();
   // Workmanager().initialize(
   //   callbackDispatcher,
@@ -91,6 +100,7 @@ class _MyAppState extends State<MyApp> {
   // void onClickNotification(String? payload) => Navigator.push(
   //     context, MaterialPageRoute(builder: (context) => LoginScreen()));
   bool isLogin = UserSharePreferences.getLoginStts();
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -103,7 +113,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
           // appBarTheme: AppBarTheme(color: primaryColor),
           primarySwatch: MyApp.generateMaterialColorFromColor(primaryColor)),
-      home: isLogin ? MyNavigationScreen() : RegisterationScreen(),
+      home: isLogin ? MyNavigationScreen() : LoginScreen(),
       // initialRoute: '/', onGenerateRoute: (settings) {
       //   switch (settings.name){
       //     case '/':

@@ -85,7 +85,11 @@ class _HolidayDetailState extends State<HolidayDetail> {
                           : "Rejected",
                   style: TextStyle(
                       fontSize: 20,
-                      color: textColor,
+                      color: widget.holiday.approvalStatus == 0
+                          ? Colors.black
+                          : widget.holiday.approvalStatus == 1
+                              ? Colors.green
+                              : Colors.red,
                       fontWeight: FontWeight.w500),
                   softWrap: false,
                 ),
@@ -100,7 +104,7 @@ class _HolidayDetailState extends State<HolidayDetail> {
                 // SizedBox(
                 //   height: MediaQuery.of(context).size.height / 35,
                 // ),
-                widget.holiday.narration! == 'null'
+                widget.holiday.narration! == 'null' || widget.holiday.narration! ==''
                     ? Container()
                     : Padding(
                         padding: EdgeInsets.zero,

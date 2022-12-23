@@ -50,7 +50,7 @@ class ApiCall {
   }) async {
     String employeeId = UserSharePreferences.getEmployeeId();
     int businessId = UserSharePreferences.getBusinessId();
-    String email = UserSharePreferences.getName();
+    String email = UserSharePreferences.getEmail();
     http.Response response = await http.post(
       Uri.parse(
           'https://dev.rosterinsight.com/api/v1/MobileApp/updatePassword'),
@@ -85,7 +85,7 @@ class ApiCall {
     int? businessId,
     String? password,
   }) async {
-    String email = UserSharePreferences.getName();
+    String email = UserSharePreferences.getEmail();
     http.Response response = await http.post(
       Uri.parse('https://dev.rosterinsight.com/api/v1/MobileApp/validateUser'),
       headers: <String, String>{
@@ -195,9 +195,17 @@ class ApiCall {
   ///
 
   static Future<List<Holiday>> apiForGetHolidays() async {
+    int businessId = UserSharePreferences.getBusinessId() == 0
+        ? 1
+        : UserSharePreferences.getBusinessId();
+    String employeeId = UserSharePreferences.getEmployeeId() == "0000"
+        ? "0002"
+        : UserSharePreferences.getEmployeeId();
     http.Response response = await http.get(
       Uri.parse(
-          """https://dev.rosterinsight.com/api/v1/MobileApp/getHolidays?BusinessId=${UserSharePreferences.getBusinessId()}&EmployeeId=${UserSharePreferences.getEmployeeId()}"""),
+          'https://dev.rosterinsight.com/api/v1/MobileApp/getHolidaysByEmployeeId?BusinessId=$businessId&EmployeeId=$employeeId'
+          // 'https://dev.rosterinsight.com/api/v1/MobileApp/getholidayTypes'
+          ),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

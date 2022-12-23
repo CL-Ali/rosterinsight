@@ -1,5 +1,7 @@
 // ignore_for_file: use_build_context_synchronously
 
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -185,6 +187,13 @@ class _SiteBookingScreenState extends State<SiteBookingScreen> {
     booking = [];
     nameOfSite = [];
 
+    setState(() {
+      fromdate =
+          (DateFormat('dd/MM/yyyy').format(DateTime(now.year, now.month, 1)));
+
+      todate = (DateFormat('dd/MM/yyyy')
+          .format(DateTime(now.year, now.month + 1, 0)));
+    });
     if (!isSearch) {
       tList = await ApiCall.apiForGetBooking(isSearchDateRange: false);
     } else {
@@ -192,11 +201,6 @@ class _SiteBookingScreenState extends State<SiteBookingScreen> {
     }
 
     setState(() {
-      fromdate =
-          (DateFormat('dd/MM/yyyy').format(DateTime(now.year, now.month, 1)));
-
-      todate = (DateFormat('dd/MM/yyyy')
-          .format(DateTime(now.year, now.month + 1, 0)));
       if (tList.isNotEmpty) {
         separateGrpName(tList);
         count = 0;
@@ -210,15 +214,6 @@ class _SiteBookingScreenState extends State<SiteBookingScreen> {
       isProcessing = false;
       isLoading = false;
     });
-  }
-
-  void rebuildAllChildren(BuildContext context) {
-    void rebuild(Element el) {
-      el.markNeedsBuild();
-      el.visitChildren(rebuild);
-    }
-
-    (context as Element).visitChildren(rebuild);
   }
 
   @override
@@ -238,128 +233,178 @@ class _SiteBookingScreenState extends State<SiteBookingScreen> {
     double height = size.height;
     double width = size.width;
     return Scaffold(
-        appBar: AppBar(
-          title: Text('Site Booking'),
-        ),
-        drawer: const MyDrawer(),
-        body: !isAllDataGet
-            ? !isLoading && booking.isEmpty
-                ? Center(
-                    child: Text('There is no Data.',
-                        style: TextStyle(
+      appBar: AppBar(
+        title: Text('Site Booking'),
+      ),
+      drawer: const MyDrawer(),
+      body: ListView(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(18.0),
+            child: Row(children: [
+              Expanded(
+                  flex: 3,
+                  child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          datePicker(height: height, isStart: true);
+                        });
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.only(
+                          bottom:
+                              4, // This can be the space you need between text and underline
+                        ),
+                        decoration: BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(
                           color: textColor,
-                          fontSize: 18,
-                        )),
-                  )
-                : SkeletonListView()
-            : SingleChildScrollView(
-                child: Column(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.all(18.0),
-                      child: Row(children: [
-                        Expanded(
-                            flex: 3,
-                            child: TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    datePicker(height: height, isStart: true);
-                                  });
-                                },
-                                child: Container(
-                                  width: double.infinity,
-                                  alignment: Alignment.center,
-                                  padding: EdgeInsets.only(
-                                    bottom:
-                                        4, // This can be the space you need between text and underline
-                                  ),
-                                  decoration: BoxDecoration(
-                                      border: Border(
-                                          bottom: BorderSide(
-                                    color: textColor,
-                                    width:
-                                        1.0, // This would be the width of the underline
-                                  ))),
-                                  child: Text(
-                                    fromdate,
-                                    style: TextStyle(
-                                      color: textColor,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ))),
-                        Expanded(
-                            flex: 3,
-                            child: TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    datePicker(height: height, isStart: false);
-                                  });
-                                },
-                                child: Container(
-                                  width: double.infinity,
-                                  alignment: Alignment.center,
-                                  padding: EdgeInsets.only(
-                                    bottom:
-                                        4, // This can be the space you need between text and underline
-                                  ),
-                                  decoration: BoxDecoration(
-                                      border: Border(
-                                          bottom: BorderSide(
-                                    color: textColor,
-                                    width:
-                                        1.0, // This would be the width of the underline
-                                  ))),
-                                  child: Text(
-                                    todate,
-                                    style: TextStyle(
-                                      color: textColor,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w400,
-                                    ),
-                                  ),
-                                ))),
-                        Expanded(
-                          flex: 2,
-                          child: ElevatedButton(
-                            onPressed: checkDateRange(fromdate, todate) < 0 ||
-                                    isProcessing
-                                ? null
-                                : () async {
-                                    setState(() {
-                                      isProcessing = true;
-                                    });
-                                    filterEmployeeDetail = await dateFilter(
-                                        fromdate.toString(), todate.toString());
-
-                                    await preload(
-                                        isSearch: true,
-                                        list: filterEmployeeDetail);
-                                    setState(() {
-                                      isFilter = true;
-                                      isFilter = false;
-                                    });
-                                  },
-                            child: isProcessing
-                                ? SizedBox(
-                                    height: 17,
-                                    width: 17,
-                                    child: const CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                      // value: 12,
-                                      color: Colors.white,
-                                    ),
-                                  )
-                                : const Text(
-                                    'Fetch',
-                                    style: TextStyle(
-                                        fontSize: 13, color: Colors.white),
-                                  ),
+                          width:
+                              1.0, // This would be the width of the underline
+                        ))),
+                        child: Text(
+                          fromdate,
+                          style: TextStyle(
+                            color: textColor,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
                           ),
                         ),
-                      ]),
-                    ),
+                      ))),
+              Expanded(
+                  flex: 3,
+                  child: TextButton(
+                      onPressed: () {
+                        setState(() {
+                          datePicker(height: height, isStart: false);
+                        });
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        alignment: Alignment.center,
+                        padding: EdgeInsets.only(
+                          bottom:
+                              4, // This can be the space you need between text and underline
+                        ),
+                        decoration: BoxDecoration(
+                            border: Border(
+                                bottom: BorderSide(
+                          color: textColor,
+                          width:
+                              1.0, // This would be the width of the underline
+                        ))),
+                        child: Text(
+                          todate,
+                          style: TextStyle(
+                            color: textColor,
+                            fontSize: 15,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
+                      ))),
+              Expanded(
+                flex: 2,
+                child: ElevatedButton(
+                  onPressed: checkDateRange(
+                                  fromdate == ""
+                                      ? dateFormat.format(fromDate)
+                                      : fromdate,
+                                  todate == ""
+                                      ? dateFormat.format(toDate)
+                                      : todate) <
+                              0 ||
+                          isProcessing
+                      ? null
+                      : () async {
+                          setState(() {
+                            isProcessing = true;
+                          });
+                          filterEmployeeDetail = await dateFilter(
+                              fromdate.toString(), todate.toString());
+
+                          await preload(
+                              isSearch: true, list: filterEmployeeDetail);
+                          setState(() {
+                            isFilter = true;
+                            isFilter = false;
+                          });
+                        },
+                  child: isProcessing
+                      ? SizedBox(
+                          height: 17,
+                          width: 17,
+                          child: const CircularProgressIndicator(
+                            strokeWidth: 2,
+                            // value: 12,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text(
+                          'Fetch',
+                          style: TextStyle(fontSize: 13, color: Colors.white),
+                        ),
+                ),
+              ),
+            ]),
+          ),
+          ElevatedButton(
+            onPressed: () async {
+              requestPermission() async {
+                FirebaseMessaging messaging = FirebaseMessaging.instance;
+                NotificationSettings settings =
+                    await messaging.requestPermission(
+                  alert: true,
+                  announcement: false,
+                  badge: true,
+                  carPlay: false,
+                  criticalAlert: false,
+                  provisional: false,
+                  sound: true,
+                );
+                if (settings.authorizationStatus ==
+                    AuthorizationStatus.authorized) {
+                  print('User granted Permission');
+                } else if (settings.authorizationStatus ==
+                    AuthorizationStatus.provisional) {
+                  print('User granted provisional Permission');
+                } else {
+                  print('User is Not granted ');
+                }
+              }
+
+              var token;
+              getTokenMethode() async {
+                var messaging = FirebaseMessaging.instance;
+                token = await messaging.getToken() ?? '';
+                print(token);
+              }
+
+              await requestPermission();
+              // await getTokenMethode();
+            },
+            child: const Text(
+              'Test',
+              style: TextStyle(fontSize: 13, color: Colors.white),
+            ),
+          ),
+          Divider(
+            thickness: 2,
+          ),
+          !isAllDataGet
+              ? !isLoading && booking.isEmpty
+                  ? Center(
+                      child: Text('There is no Data.',
+                          style: TextStyle(
+                            color: textColor,
+                            fontSize: 18,
+                          )),
+                    )
+                  : Center(child: CircularProgressIndicator())
+              // SkeletonListView()
+              : Column(
+                  children: [
                     Padding(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20.0, vertical: 25),
@@ -464,6 +509,8 @@ class _SiteBookingScreenState extends State<SiteBookingScreen> {
                           ),
                   ],
                 ),
-              ));
+        ],
+      ),
+    );
   }
 }

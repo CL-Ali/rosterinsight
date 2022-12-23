@@ -24,7 +24,7 @@ class CreateHolidayScreen extends StatefulWidget {
 
 class _CreateHolidayScreenState extends State<CreateHolidayScreen> {
   List<HolidayType> listOfHolidays = [];
-  HolidayType selectedHoliday = HolidayType(holidayName: 'Select Holiday');
+  HolidayType selectedHoliday = HolidayType(holidayName: 'Select Holiday Type');
   String fromDate = 'Select Date';
   String toDate = 'Select Date';
   DateFormat dateFormat = DateFormat('dd/MM/yyyy ');
@@ -128,22 +128,41 @@ class _CreateHolidayScreenState extends State<CreateHolidayScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 20),
           child: Column(children: [
             spaceBtwWidget,
-            Row(
+            Column(
               children: [
-                Expanded(
-                    flex: 2,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Container(
+                    // alignment: Alignment.centerLeft,
                     child: Text(
-                      'Holiday Type',
-                      style: TextStyle(fontSize: 18, color: textColor),
-                    )),
-                Expanded(
-                  flex: 3,
+                      'Holiday',
+                      style: TextStyle(fontSize: 28, color: textColor),
+                    ),
+                  ),
+                ),
+                spaceBtwWidget,
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
                   child: DropdownButton(
-                      // elevation: 1,
-                      borderRadius: BorderRadius.circular(10),
-                      hint: Text(
-                        selectedHoliday.holidayName!,
-                        style: TextStyle(fontSize: 21, color: textColor),
+                      // dropdownColor: Colors.transparent,
+                      // elevation: 0,
+                      iconDisabledColor: Colors.transparent,
+                      iconEnabledColor: Colors.transparent,
+                      icon: Container(),
+                      borderRadius: BorderRadius.circular(5),
+                      underline: Container(),
+                      hint: Container(
+                        width: double.infinity,
+                        height: double.infinity,
+                        decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(5),
+                            border: Border.all(width: 0.5, color: textColor)),
+                        child: Center(
+                          child: Text(
+                            selectedHoliday.holidayName!,
+                            style: TextStyle(fontSize: 21, color: textColor),
+                          ),
+                        ),
                       ),
                       alignment: Alignment.center,
                       isExpanded: true,
@@ -173,9 +192,9 @@ class _CreateHolidayScreenState extends State<CreateHolidayScreen> {
                       style: TextStyle(fontSize: 18, color: textColor),
                     )),
                 Expanded(
-                    flex: 3,
-                    child: TextButton(
-                        onPressed: () {
+                    flex: 2,
+                    child: GestureDetector(
+                        onTap: () {
                           setState(() {
                             dateTimePicker(height: height, isStart: true);
                           });
@@ -183,23 +202,28 @@ class _CreateHolidayScreenState extends State<CreateHolidayScreen> {
                         child: Container(
                           width: double.infinity,
                           alignment: Alignment.center,
-                          padding: EdgeInsets.only(
-                            bottom:
-                                3, // This can be the space you need between text and underline
-                          ),
                           decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(
-                            color: textColor,
-                            width:
-                                1.0, // This would be the width of the underline
-                          ))),
-                          child: Text(
-                            fromDate,
-                            style: TextStyle(
-                              color: textColor,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w400,
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(width: 0.5, color: textColor)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  fromDate,
+                                  style: TextStyle(
+                                    color: textColor,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.watch_later,
+                                  color: textColor,
+                                  size: 18,
+                                )
+                              ],
                             ),
                           ),
                         ))),
@@ -215,9 +239,9 @@ class _CreateHolidayScreenState extends State<CreateHolidayScreen> {
                       style: TextStyle(fontSize: 18, color: textColor),
                     )),
                 Expanded(
-                    flex: 3,
-                    child: TextButton(
-                        onPressed: () {
+                    flex: 2,
+                    child: GestureDetector(
+                        onTap: () {
                           setState(() {
                             dateTimePicker(height: height, isStart: false);
                           });
@@ -230,18 +254,27 @@ class _CreateHolidayScreenState extends State<CreateHolidayScreen> {
                                 3, // This can be the space you need between text and underline
                           ),
                           decoration: BoxDecoration(
-                              border: Border(
-                                  bottom: BorderSide(
-                            color: textColor,
-                            width:
-                                1.0, // This would be the width of the underline
-                          ))),
-                          child: Text(
-                            toDate,
-                            style: TextStyle(
-                              color: textColor,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w400,
+                              borderRadius: BorderRadius.circular(5),
+                              border: Border.all(width: 0.5, color: textColor)),
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text(
+                                  toDate,
+                                  style: TextStyle(
+                                    color: textColor,
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.w400,
+                                  ),
+                                ),
+                                Icon(
+                                  Icons.watch_later,
+                                  color: textColor,
+                                  size: 18,
+                                )
+                              ],
                             ),
                           ),
                         ))),
@@ -333,9 +366,14 @@ class _CreateHolidayScreenState extends State<CreateHolidayScreen> {
                 // isExtended: true,
                 // enableFeedback: true,
                 child: isProcessing
-                    ? const CircularProgressIndicator(
-                        strokeWidth: 3,
-                        color: Colors.white,
+                    ? SizedBox(
+                        height: 17,
+                        width: 17,
+                        child: const CircularProgressIndicator(
+                          strokeWidth: 2,
+                          // value: 12,
+                          color: Colors.white,
+                        ),
                       )
                     : Text(widget.isEdit == null || !widget.isEdit!
                         ? 'Save'
