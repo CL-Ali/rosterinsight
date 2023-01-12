@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'dart:math';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 // import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
@@ -16,8 +18,8 @@ import 'package:rosterinsight/screens/RegistrationScreen/RegisterationScreen.dar
 import 'package:rosterinsight/services/Api_Call_Service.dart';
 // import 'package:workmanager/workmanager.dart';
 
-// final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
-//     FlutterLocalNotificationsPlugin();
+final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+    FlutterLocalNotificationsPlugin();
 // @pragma('vm:entry-point')
 // void callbackDispatcher() {
 //   Workmanager().executeTask((task, inputData) {
@@ -25,19 +27,24 @@ import 'package:rosterinsight/services/Api_Call_Service.dart';
 //     return Future.value(true);
 //   });
 // }
+Future<void> backgroundHandler(RemoteMessage message) async {
+  print(message.data.toString());
+  print(message.notification!.title);
+}
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  FirebaseOptions options = FirebaseOptions(
-      apiKey: 'AIzaSyD3d6KrjBRcne-dUiwcMyDU7HPe1wbXvDE',
-      appId: 'com.example.rosterinsight',
-      messagingSenderId:
-          '297702473904-gseobg5bgr9ndf40i5cfe3htdubg1fvv.apps.googleusercontent.com',
-      projectId: 'rosterinsight');
-  var firebase = await Firebase.initializeApp(
-    options: options,
-  );
+  // FirebaseOptions options = new FirebaseOptions(
+  // apiKey: "AIzaSyA3kr-vML6MJFPHeVU4PMHdSIvOlMo2gEo",
+  // appId: 'com.example.rosterinsight',
+  // messagingSenderId: '382194111928',
+  // projectId: 'rosterinsight-368605'
+  // );
+  await Firebase.initializeApp();
+  FirebaseMessaging.onBackgroundMessage(backgroundHandler);
+  Notify.initialize(flutterLocalNotificationsPlugin);
   await UserSharePreferences.init();
+
   // Workmanager().initialize(
   //   callbackDispatcher,
   //   isInDebugMode: true,
@@ -91,7 +98,46 @@ class _MyAppState extends State<MyApp> {
   @override
   void initState() {
     super.initState();
-    // Notify.initialize(flutterLocalNotificationsPlugin);
+
+    FirebaseMessaging.instance.getInitialMessage().then(
+      (message) {
+        print("FirebaseMessaging.instance.getInitialMessage");
+        if (message != null) {
+          print("New Notification");
+          // if (message.data['_id'] != null) {
+          //   Navigator.of(context).push(
+          //     MaterialPageRoute(
+          //       builder: (context) => DemoScreen(
+          //         id: message.data['_id'],
+          //       ),
+          //     ),
+          //   );
+          // }
+        }
+      },
+    );
+
+    FirebaseMessaging.onMessage.listen(
+      (message) {
+        print("FirebaseMessaging.onMessage.listen");
+        if (message.notification != null) {
+          print(message.notification!.title);
+          print(message.notification!.body);
+          print("message.data11 ${message.data}");
+          // LocalNotificationService.display(message);
+        }
+      },
+    );
+    FirebaseMessaging.onMessageOpenedApp.listen(
+      (message) {
+        print("FirebaseMessaging.onMessageOpenedApp.listen");
+        if (message.notification != null) {
+          print(message.notification!.title);
+          print(message.notification!.body);
+          print("message.data22 ${message.data['_id']}");
+        }
+      },
+    );
     preload();
   }
 

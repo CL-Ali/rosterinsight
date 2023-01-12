@@ -146,14 +146,16 @@ class ApiCall {
               "searchInDateRange": false
             }),
     );
-
+    List<Booking> list = [];
     if (response.statusCode == 200) {
       var body = jsonDecode(response.body);
       var data = body['mobileBooking'];
-      List<Booking> list = await Booking().mapToList(data ?? []);
+      if (data != null) {
+        list = await Booking().mapToList(data ?? []);
+      }
       return list;
     } else {
-      return [Booking()..site = "Error found ,${response.statusCode} code"];
+      return [];
     }
   }
 

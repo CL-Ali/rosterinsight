@@ -376,13 +376,43 @@ class _SiteBookingScreenState extends State<SiteBookingScreen> {
 
               var token;
               getTokenMethode() async {
-                var messaging = FirebaseMessaging.instance;
-                token = await messaging.getToken() ?? '';
-                print(token);
+                try {
+                  var auth = AuthorizationStatus.authorized;
+                  print(auth);
+                  var messaging = FirebaseMessaging.instance;
+
+                  token =
+                      // "ali";
+                      await messaging.getToken() ?? '';
+
+                  Get.rawSnackbar(
+                    snackPosition: SnackPosition.TOP,
+                    isDismissible: true,
+                    snackStyle: SnackStyle.GROUNDED,
+                    message: token,
+                    // borderRadius: 10,
+                    // colorText: Colors.white,
+                    backgroundColor: successColor,
+                    icon: const Icon(Icons.add_alert),
+                  );
+                  print(token);
+                } on FirebaseException catch (e) {
+                  print(e);
+                  Get.rawSnackbar(
+                    snackPosition: SnackPosition.TOP,
+                    isDismissible: true,
+                    snackStyle: SnackStyle.GROUNDED,
+                    message: e.toString(),
+                    // borderRadius: 10,
+                    // colorText: Colors.white,
+                    backgroundColor: failColor,
+                    icon: const Icon(Icons.add_alert),
+                  );
+                }
               }
 
               await requestPermission();
-              // await getTokenMethode();
+              await getTokenMethode();
             },
             child: const Text(
               'Test',

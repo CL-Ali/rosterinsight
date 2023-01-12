@@ -1,33 +1,33 @@
 {
   "project_info": {
-    "project_number": "297702473904",
-    "project_id": "rosterinsight",
-    "storage_bucket": "rosterinsight.appspot.com"
+    "project_number": "452651337641",
+    "project_id": "rosterinsight-7be51",
+    "storage_bucket": "rosterinsight-7be51.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:297702473904:android:118252245ab0f7913dfb75",
+        "mobilesdk_app_id": "1:452651337641:android:0f3b974f1097b24d6b26b8",
         "android_client_info": {
           "package_name": "com.example.rosterinsight"
         }
       },
       "oauth_client": [
         {
-          "client_id": "297702473904-gseobg5bgr9ndf40i5cfe3htdubg1fvv.apps.googleusercontent.com",
+          "client_id": "452651337641-ui9bav5s5332skvhhkj05488o0t96b9v.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyD3d6KrjBRcne-dUiwcMyDU7HPe1wbXvDE"
+          "current_key": "AIzaSyCHptEDOa-hlsKndEyqzG2kvAmq_jGvfYE"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "297702473904-gseobg5bgr9ndf40i5cfe3htdubg1fvv.apps.googleusercontent.com",
+              "client_id": "452651337641-ui9bav5s5332skvhhkj05488o0t96b9v.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

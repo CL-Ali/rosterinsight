@@ -1,6 +1,7 @@
 import UIKit
 import Flutter
-import workmanager
+import FirebaseCore
+// import workmanager
 @UIApplicationMain
 @objc class AppDelegate: FlutterAppDelegate {
    func application(_ application:UIApplication,didFinishLaunchingWithOptions launchOptions:[UIApplicationLaunchOptionsKey:Any]?)->Bool{
@@ -17,10 +18,10 @@ import workmanager
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
     GeneratedPluginRegistrant.register(with: self)
-    WorkmanagerPlugin.registerTask(withIdentifier: "task-identifier")
+    // WorkmanagerPlugin.registerTask(withIdentifier: "task-identifier")
   FlutterLocalNotificationsPlugin.setPluginRegistrantCallback { (registry) in
     GeneratedPluginRegistrant.register(with: registry)}
-
+FirebaseApp.configure()
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }
