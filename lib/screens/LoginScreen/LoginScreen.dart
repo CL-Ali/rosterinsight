@@ -180,25 +180,45 @@ class _LoginScreenState extends State<LoginScreen> {
                                       setState(() {
                                         isLoginUserValid = true;
                                       });
-                                      String isValid =
-                                          await ApiCall.apiForLogin(
-                                              employeeId: employeeID,
-                                              businessId: businessID,
-                                              password: password);
-                                      bool response =
-                                          await exceptionSnackBar(isValid);
-                                      setState(() {
-                                        isLoginUserValid = false;
-                                      });
-                                      if (response) {
-                                        await UserSharePreferences
-                                            .setBusinessId(businessID);
-                                        await UserSharePreferences
-                                            .setEmployeeId(employeeID);
+                                      if (employeeID.toLowerCase() == 'demo') {
+                                        DemoModel demoModel = DemoModel(
+                                          employeeID: employeeID,
+                                          password: password,
+                                          businessID: businessID,
+                                        );
+                                        bool isValid =
+                                            DemoModel.isMatchForDemo(demoModel);
+                                        setState(() {
+                                          isLoginUserValid = false;
+                                        });
+                                        if (isValid) {
+                                          await UserSharePreferences
+                                              .setBusinessId(businessID);
+                                          await UserSharePreferences
+                                              .setEmployeeId(employeeID);
+                                          Get.to(MyNavigationScreen());
+                                        }
+                                      } else {
+                                        String isValid =
+                                            await ApiCall.apiForLogin(
+                                                employeeId: employeeID,
+                                                businessId: businessID,
+                                                password: password);
+                                        bool response =
+                                            await exceptionSnackBar(isValid);
+                                        setState(() {
+                                          isLoginUserValid = false;
+                                        });
+                                        if (response) {
+                                          await UserSharePreferences
+                                              .setBusinessId(businessID);
+                                          await UserSharePreferences
+                                              .setEmployeeId(employeeID);
 
-                                        Get.to(LoginScreen.isDirectLogin
-                                            ? MyNavigationScreen()
-                                            : ChangePasswordScreen());
+                                          Get.to(LoginScreen.isDirectLogin
+                                              ? MyNavigationScreen()
+                                              : ChangePasswordScreen());
+                                        }
                                       }
                                     },
                               minWidth: double.infinity,
@@ -247,4 +267,18 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
     );
   }
+}
+
+class DemoModel {
+  int businessID;
+  String employeeID;
+  String password;
+  DemoModel(
+      {required this.businessID,
+      required this.employeeID,
+      required this.password});
+  static bool isMatchForDemo(DemoModel demoModel) =>
+      demoModel.businessID == 1 &&
+      demoModel.employeeID.toLowerCase() == "demo" &&
+      demoModel.password.toLowerCase() == "demo";
 }

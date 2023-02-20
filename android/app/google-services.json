@@ -7,9 +7,9 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:452651337641:android:0f3b974f1097b24d6b26b8",
+        "mobilesdk_app_id": "1:452651337641:android:70836f33223b3a8b6b26b8",
         "android_client_info": {
-          "package_name": "com.example.rosterinsight"
+          "package_name": "com.exapp.rosterinsight"
         }
       },
       "oauth_client": [
@@ -29,6 +29,13 @@
             {
               "client_id": "452651337641-ui9bav5s5332skvhhkj05488o0t96b9v.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "452651337641-k5d0mibacuob8v3t1r3d60087sjgdjji.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.rosterinsight"
+              }
             }
           ]
         }

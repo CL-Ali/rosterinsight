@@ -1,10 +1,13 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+// import 'package:rosterinsight/screens/FaceDetection/FaceDetection.dart';
+import 'package:rosterinsight/MainComponents/SignatureScreen.dart';
 import 'package:rosterinsight/MainComponents/constant.dart';
 import 'package:rosterinsight/MainComponents/sharePreferences.dart';
 import 'package:rosterinsight/screens/LoginScreen/LoginScreen.dart';
 import 'package:rosterinsight/screens/RegistrationScreen/RegisterationScreen.dart';
+import 'package:rosterinsight/screens/voicecall/VideoCallScreen.dart';
 
 class MyDrawer extends StatefulWidget {
   const MyDrawer({super.key});
@@ -61,6 +64,33 @@ class _MyDrawerState extends State<MyDrawer> {
         //     children: const [Icon(CupertinoIcons.person), Text(" login")],
         //   ),
         // ),
+        MaterialButton(
+          onPressed: () {
+            // Get.to(VoiceCallScreen());
+          },
+          child: Row(
+            children: const [Icon(Icons.call), Text(" Voice Call")],
+          ),
+        ),
+        MaterialButton(
+          onPressed: () {
+            // Get.to(FaceDetectionScreen());
+          },
+          child: Row(
+            children: const [Icon(Icons.face), Text(" Face Detection")],
+          ),
+        ),
+        MaterialButton(
+          onPressed: () {
+            Get.to(SignatureScreen());
+          },
+          child: Row(
+            children: const [
+              Icon(Icons.design_services_outlined),
+              Text(" Signature ")
+            ],
+          ),
+        ),
         MaterialButton(
           onPressed: () async {
             await UserSharePreferences.logoutEmployee();

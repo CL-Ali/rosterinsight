@@ -68,12 +68,15 @@ class _CreateHolidayScreenState extends State<CreateHolidayScreen> {
   @override
   void initState() {
     setState(() {
-      listOfHolidays = MyNavigationScreen.listOfHolidays;
+      if (MyNavigationScreen.listOfHolidays.isEmpty) {
+        MyApp.preload();
+      }
       if (widget.isEdit != null) {
         if (widget.isEdit!) {
           setEditParameter();
         }
       }
+      listOfHolidays = MyNavigationScreen.listOfHolidays;
       // listOfHolidays.removeAt(0);
     });
     super.initState();

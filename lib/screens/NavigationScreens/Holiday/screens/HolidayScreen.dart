@@ -138,6 +138,9 @@ class _HolidayScreenState extends State<HolidayScreen> {
   @override
   void initState() {
     super.initState();
+    if (MyNavigationScreen.listOfHolidays.isEmpty) {
+      MyApp.preload();
+    }
     preload();
   }
 

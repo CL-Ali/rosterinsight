@@ -1,0 +1,200 @@
+import 'package:flutter/material.dart';
+import 'dart:developer';
+
+import 'package:flutter_svg/svg.dart';
+import 'package:signature/signature.dart';
+import 'dart:typed_data';
+
+class SignatureScreen extends StatefulWidget {
+  const SignatureScreen({super.key});
+
+  @override
+  State<SignatureScreen> createState() => _SignatureScreenState();
+}
+
+class _SignatureScreenState extends State<SignatureScreen> {
+  final SignatureController _controller = SignatureController(
+    penStrokeWidth: 2,
+    penColor: Colors.red,
+    exportBackgroundColor: Colors.black,
+    exportPenColor: Colors.white,
+    onDrawStart: () => log('onDrawStart called!'),
+    onDrawEnd: () => log('onDrawEnd called!'),
+  );
+
+  @override
+  void initState() {
+    super.initState();
+    _controller.addListener(() => log('Value changed'));
+  }
+
+  @override
+  void dispose() {
+    // IMPORTANT to dispose of the controller
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Uint8List? image;
+  Future<void> exportImage(BuildContext context) async {
+    if (_controller.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          key: Key('snackbarPNG'),
+          content: Text('No content'),
+        ),
+      );
+      return;
+    }
+
+    final Uint8List? data =
+        await _controller.toPngBytes(height: 300, width: 300);
+    setState(() {
+      image = data;
+    });
+    if (data == null) {
+      return;
+    }
+
+    // if (!mounted) return;
+
+    //   await push(
+    //     context,
+    //     Scaffold(
+    //       appBar: AppBar(
+    //         title: const Text('PNG Image'),
+    //       ),
+    //       body: Center(
+    //         child: Container(
+    //           color: Colors.grey[300],
+    //           child: Image.memory(data),
+    //         ),
+    //       ),
+    //     ),
+    //   );
+  }
+
+  // Future<void> exportSVG(BuildContext context) async {
+  //   if (_controller.isEmpty) {
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(
+  //         key: Key('snackbarSVG'),
+  //         content: Text('No content'),
+  //       ),
+  //     );
+  //     return;
+  //   }
+
+  //   final SvgPicture data = _controller.toSVG()!;
+
+  //   // if (!mounted) return;
+
+  //   //   await push(
+  //   //     context,
+  //   //     Scaffold(
+  //   //       appBar: AppBar(
+  //   //         title: const Text('SVG Image'),
+  //   //       ),
+  //   //       body: Center(
+  //   //         child: Container(
+  //   //           color: Colors.grey[300],
+  //   //           child: data,
+  //   //         ),
+  //   //       ),
+  //   //     ),
+  //   //   );
+  // }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Signature Demo'),
+      ),
+      body: ListView(
+        children: <Widget>[
+          SizedBox(
+            height: 300,
+            width: double.infinity,
+            child: Center(
+              child: image != null
+                  ? Image.memory(
+                      image!,
+                      fit: BoxFit.fill,
+                      width: double.infinity,
+                    )
+                  : Text('Red'),
+            ),
+          ),
+          //SIGNATURE CANVAS
+          Signature(
+            key: const Key('signature'),
+            controller: _controller,
+            height: 300,
+            backgroundColor: Colors.grey[300]!,
+          ),
+          //OK AND CLEAR BUTTONS
+
+          const SizedBox(
+            height: 300,
+            child: Center(
+              child: Text('Big container to test scrolling issues'),
+            ),
+          ),
+        ],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Container(
+          decoration: const BoxDecoration(color: Colors.black),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceAround,
+            mainAxisSize: MainAxisSize.max,
+            children: <Widget>[
+              //SHOW EXPORTED IMAGE IN NEW ROUTE
+              IconButton(
+                key: const Key('exportPNG'),
+                icon: const Icon(Icons.image),
+                color: Colors.blue,
+                onPressed: () => exportImage(context),
+                tooltip: 'Export Image',
+              ),
+              // IconButton(
+              //   key: const Key('exportSVG'),
+              //   icon: const Icon(Icons.share),
+              //   color: Colors.blue,
+              //   onPressed: () => exportSVG(context),
+              //   tooltip: 'Export SVG',
+              // ),
+              IconButton(
+                icon: const Icon(Icons.undo),
+                color: Colors.blue,
+                onPressed: () {
+                  setState(() => _controller.undo());
+                },
+                tooltip: 'Undo',
+              ),
+              IconButton(
+                icon: const Icon(Icons.redo),
+                color: Colors.blue,
+                onPressed: () {
+                  setState(() => _controller.redo());
+                },
+                tooltip: 'Redo',
+              ),
+              //CLEAR CANVAS
+              IconButton(
+                key: const Key('clear'),
+                icon: const Icon(Icons.clear),
+                color: Colors.blue,
+                onPressed: () {
+                  setState(() => _controller.clear());
+                },
+                tooltip: 'Clear',
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}

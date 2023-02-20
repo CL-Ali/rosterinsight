@@ -1,9 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.rosterinsight">
+    package="com.exapp.rosterinsight">
    <application
         android:label="rosterinsight"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        <!-- <meta-data 
+        android:name ="com.google.mlkit.version.DEPENDENCIES" 
+        android:value="ica"  /> -->
         <activity
             android:name=".MainActivity"
             android:exported="true"

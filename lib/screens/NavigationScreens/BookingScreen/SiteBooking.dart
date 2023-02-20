@@ -195,7 +195,8 @@ class _SiteBookingScreenState extends State<SiteBookingScreen> {
           .format(DateTime(now.year, now.month + 1, 0)));
     });
     if (!isSearch) {
-      tList = await ApiCall.apiForGetBooking(isSearchDateRange: false);
+      tList = await dateFilter(fromdate.toString(), todate.toString());
+      // await ApiCall.apiForGetBooking(isSearchDateRange: false);
     } else {
       tList = list!;
     }
@@ -349,76 +350,76 @@ class _SiteBookingScreenState extends State<SiteBookingScreen> {
               ),
             ]),
           ),
-          ElevatedButton(
-            onPressed: () async {
-              requestPermission() async {
-                FirebaseMessaging messaging = FirebaseMessaging.instance;
-                NotificationSettings settings =
-                    await messaging.requestPermission(
-                  alert: true,
-                  announcement: false,
-                  badge: true,
-                  carPlay: false,
-                  criticalAlert: false,
-                  provisional: false,
-                  sound: true,
-                );
-                if (settings.authorizationStatus ==
-                    AuthorizationStatus.authorized) {
-                  print('User granted Permission');
-                } else if (settings.authorizationStatus ==
-                    AuthorizationStatus.provisional) {
-                  print('User granted provisional Permission');
-                } else {
-                  print('User is Not granted ');
-                }
-              }
+          // ElevatedButton(
+          //   onPressed: () async {
+          //     requestPermission() async {
+          //       FirebaseMessaging messaging = FirebaseMessaging.instance;
+          //       NotificationSettings settings =
+          //           await messaging.requestPermission(
+          //         alert: true,
+          //         announcement: false,
+          //         badge: true,
+          //         carPlay: false,
+          //         criticalAlert: false,
+          //         provisional: false,
+          //         sound: true,
+          //       );
+          //       if (settings.authorizationStatus ==
+          //           AuthorizationStatus.authorized) {
+          //         print('User granted Permission');
+          //       } else if (settings.authorizationStatus ==
+          //           AuthorizationStatus.provisional) {
+          //         print('User granted provisional Permission');
+          //       } else {
+          //         print('User is Not granted ');
+          //       }
+          //     }
 
-              var token;
-              getTokenMethode() async {
-                try {
-                  var auth = AuthorizationStatus.authorized;
-                  print(auth);
-                  var messaging = FirebaseMessaging.instance;
+          //     var token;
+          //     getTokenMethode() async {
+          //       try {
+          //         var auth = AuthorizationStatus.authorized;
+          //         print(auth);
+          //         var messaging = FirebaseMessaging.instance;
 
-                  token =
-                      // "ali";
-                      await messaging.getToken() ?? '';
+          //         token =
+          //             // "ali";
+          //             await messaging.getToken() ?? '';
 
-                  Get.rawSnackbar(
-                    snackPosition: SnackPosition.TOP,
-                    isDismissible: true,
-                    snackStyle: SnackStyle.GROUNDED,
-                    message: token,
-                    // borderRadius: 10,
-                    // colorText: Colors.white,
-                    backgroundColor: successColor,
-                    icon: const Icon(Icons.add_alert),
-                  );
-                  print(token);
-                } on FirebaseException catch (e) {
-                  print(e);
-                  Get.rawSnackbar(
-                    snackPosition: SnackPosition.TOP,
-                    isDismissible: true,
-                    snackStyle: SnackStyle.GROUNDED,
-                    message: e.toString(),
-                    // borderRadius: 10,
-                    // colorText: Colors.white,
-                    backgroundColor: failColor,
-                    icon: const Icon(Icons.add_alert),
-                  );
-                }
-              }
+          //         Get.rawSnackbar(
+          //           snackPosition: SnackPosition.TOP,
+          //           isDismissible: true,
+          //           snackStyle: SnackStyle.GROUNDED,
+          //           message: token,
+          //           // borderRadius: 10,
+          //           // colorText: Colors.white,
+          //           backgroundColor: successColor,
+          //           icon: const Icon(Icons.add_alert),
+          //         );
+          //         print(token);
+          //       } on FirebaseException catch (e) {
+          //         print(e);
+          //         Get.rawSnackbar(
+          //           snackPosition: SnackPosition.TOP,
+          //           isDismissible: true,
+          //           snackStyle: SnackStyle.GROUNDED,
+          //           message: e.toString(),
+          //           // borderRadius: 10,
+          //           // colorText: Colors.white,
+          //           backgroundColor: failColor,
+          //           icon: const Icon(Icons.add_alert),
+          //         );
+          //       }
+          //     }
 
-              await requestPermission();
-              await getTokenMethode();
-            },
-            child: const Text(
-              'Test',
-              style: TextStyle(fontSize: 13, color: Colors.white),
-            ),
-          ),
+          //     await requestPermission();
+          //     await getTokenMethode();
+          //   },
+          //   child: const Text(
+          //     'Test',
+          //     style: TextStyle(fontSize: 13, color: Colors.white),
+          //   ),
+          // ),
           Divider(
             thickness: 2,
           ),
