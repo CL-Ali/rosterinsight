@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 
 const primaryColor = Color(0xff594AE2);
 const successColor = Color.fromARGB(255, 106, 194, 110);
-const failColor = Color.fromARGB(255, 230, 98, 75);
+const failColor = Color.fromARGB(255, 214, 58, 30);
 final textColor = Colors.grey.shade600;
 DateFormat dateFormat = DateFormat('dd/MM/yyyy');
 void customNavigate(Widget widget, context) {

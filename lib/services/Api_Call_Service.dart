@@ -13,13 +13,12 @@ class ApiCall {
   static const String EMAIL = 'ahsanakram99@gmail.com';
   static const String PASSWORD = 'admin';
   static final data = {"email": EMAIL, "password": PASSWORD};
-  static const String URL = 'https://www.dev.rosterinsight.com';
+  static const String URL = 'https://dev.rosterinsight.com/api/v1/MobileApp';
 
   static Future<String> apiForRegistration(
       {String? name, String? email, String? token, bool? isOtpSend}) async {
     http.Response response = await http.post(
-      Uri.parse(
-          'https://dev.rosterinsight.com/api/v1/MobileApp/otpAuthentication'),
+      Uri.parse('$URL/otpAuthentication'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -52,8 +51,7 @@ class ApiCall {
     int businessId = UserSharePreferences.getBusinessId();
     String email = UserSharePreferences.getEmail();
     http.Response response = await http.post(
-      Uri.parse(
-          'https://dev.rosterinsight.com/api/v1/MobileApp/updatePassword'),
+      Uri.parse('$URL/updatePassword'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -87,7 +85,7 @@ class ApiCall {
   }) async {
     String email = UserSharePreferences.getEmail();
     http.Response response = await http.post(
-      Uri.parse('https://dev.rosterinsight.com/api/v1/MobileApp/validateUser'),
+      Uri.parse('$URL/validateUser'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -120,7 +118,7 @@ class ApiCall {
     String? toDate,
   }) async {
     http.Response response = await http.post(
-      Uri.parse('https://dev.rosterinsight.com/api/v1/MobileApp/getBookings'),
+      Uri.parse('$URL/getBookings'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -164,9 +162,7 @@ class ApiCall {
     int? bookOnStts,
     String? bookingId,
   }) async {
-    http.Response response = await http.post(
-        Uri.parse(
-            'https://dev.rosterinsight.com/api/v1/MobileApp/markBookingOnOff'),
+    http.Response response = await http.post(Uri.parse('$URL/markBookingOnOff'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -205,7 +201,7 @@ class ApiCall {
         : UserSharePreferences.getEmployeeId();
     http.Response response = await http.get(
       Uri.parse(
-          'https://dev.rosterinsight.com/api/v1/MobileApp/getHolidaysByEmployeeId?BusinessId=$businessId&EmployeeId=$employeeId'
+          '$URL/getHolidaysByEmployeeId?BusinessId=$businessId&EmployeeId=$employeeId'
           // 'https://dev.rosterinsight.com/api/v1/MobileApp/getholidayTypes'
           ),
       headers: <String, String>{
@@ -227,8 +223,7 @@ class ApiCall {
 
   static Future<List<HolidayType>> apiForGetHolidayType() async {
     http.Response response = await http.get(
-      Uri.parse(
-          'https://dev.rosterinsight.com/api/v1/MobileApp/getholidayTypes'),
+      Uri.parse('$URL/getholidayTypes'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -254,9 +249,7 @@ class ApiCall {
   }
 
   static Future<String> apiForCreateHoliday(Holiday holiday) async {
-    http.Response response = await http.post(
-        Uri.parse(
-            'https://dev.rosterinsight.com/api/v1/MobileApp/createHoliday'),
+    http.Response response = await http.post(Uri.parse('$URL/createHoliday'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -287,9 +280,7 @@ class ApiCall {
   }
 
   static Future<String> apiForEditHoliday(Holiday holiday) async {
-    http.Response response = await http.post(
-        Uri.parse(
-            'https://dev.rosterinsight.com/api/v1/MobileApp/updateHoliday'),
+    http.Response response = await http.post(Uri.parse('$URL/updateHoliday'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -328,9 +319,7 @@ class ApiCall {
           .format(DateFormat('dd/MM/yyyy').parse((holiday.edate!)));
     }
 
-    http.Response response = await http.post(
-        Uri.parse(
-            'https://dev.rosterinsight.com/api/v1/MobileApp/deleteHoliday'),
+    http.Response response = await http.post(Uri.parse('$URL/deleteHoliday'),
         headers: <String, String>{
           'Content-Type': 'application/json; charset=UTF-8',
         },
