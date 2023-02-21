@@ -9,6 +9,7 @@ class UserSharePreferences {
   static const isLogined = "isLogin";
   static const eId = "EmployeeId";
   static const bId = "BusinessId";
+  static const pass = "Password";
   static Future logoutEmployee() async {
     // await UserSharePreferences.setBusinessId(0);
     // await UserSharePreferences.setEmployeeId("0000");
@@ -26,6 +27,9 @@ class UserSharePreferences {
   static Future setName(String tName) async =>
       await prefs.setString(name, tName);
   static String getName() => prefs.getString(name) ?? "Ahsan";
+  static Future setPassword(String password) async =>
+      await prefs.setString(pass, password);
+  static String getPassword() => prefs.getString(pass) ?? "allah";
   static Future setEmail(String mail) async =>
       await prefs.setString(email, mail);
   static String getEmail() =>

@@ -10,12 +10,14 @@ class Booking {
   String? narration;
   String? bookingId;
   int? bookOnStts;
+  String? postCode;
   Booking(
       {this.sdate,
       this.edate,
       this.startTime,
       this.endTime,
       this.site,
+      this.postCode,
       this.bookingId,
       this.bookOnStts,
       this.narration});
@@ -27,6 +29,7 @@ class Booking {
         Booking booking = Booking();
         booking.bookingId = element['bookingId'].toString();
         booking.bookOnStts = element['bookOnOffStatus'];
+        booking.postCode = element['PostCode'];
 
         booking.site = element['siteTitle'].toString();
         booking.startTime = DateFormat('HH:mm').format(
