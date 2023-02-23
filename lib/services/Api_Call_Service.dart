@@ -270,7 +270,6 @@ class ApiCall {
             }
           }
         }));
-
     if (response.statusCode == 200) {
       var body = response.body;
       return body;
@@ -338,6 +337,36 @@ class ApiCall {
               "employeeId": UserSharePreferences.getEmployeeId(),
               "businessId": UserSharePreferences.getBusinessId()
             }
+          }
+        }));
+
+    if (response.statusCode == 200) {
+      var body = response.body;
+      return body;
+    } else {
+      return response.body;
+    }
+  }
+
+  static Future<String> apiForUpdateToken(String token) async {
+    http.Response response = await http.post(Uri.parse('$URL/updateToken'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, dynamic>{
+          "login": {
+            "isUpdate": true,
+            "isWebCall": true,
+            "machineId": "",
+            "entryFlag": 0,
+            "userId": 0,
+            "menuId": 0,
+            "menuItemId": 0,
+            "businessId": UserSharePreferences.getBusinessId(),
+            "employeeId": UserSharePreferences.getEmployeeId(),
+            "emailAddress": UserSharePreferences.getEmail(),
+            "password": UserSharePreferences.getPassword(),
+            "tokenNo": token
           }
         }));
 

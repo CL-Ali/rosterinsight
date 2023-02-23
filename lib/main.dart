@@ -20,7 +20,7 @@ import 'package:rosterinsight/services/Api_Call_Service.dart';
 
 final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
-// @pragma('vm:entry-point')
+@pragma('vm:entry-point')
 Future<void> backgroundHandler(RemoteMessage message) async {
   print(message.data.toString());
   print(message.notification!.title);
@@ -29,12 +29,6 @@ Future<void> backgroundHandler(RemoteMessage message) async {
 List<CameraDescription> cameras = [];
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  // FirebaseOptions options = new FirebaseOptions(
-  // apiKey: "AIzaSyA3kr-vML6MJFPHeVU4PMHdSIvOlMo2gEo",
-  // appId: 'com.example.rosterinsight',
-  // messagingSenderId: '382194111928',
-  // projectId: 'rosterinsight-368605'
-  // );
   await Firebase.initializeApp();
   FirebaseMessaging.onBackgroundMessage(backgroundHandler);
   Notify.initialize(flutterLocalNotificationsPlugin);
@@ -88,7 +82,7 @@ class _MyAppState extends State<MyApp> {
       (message) {
         print("FirebaseMessaging.instance.getInitialMessage");
         if (message != null) {
-          print("New Notification");
+          Get.snackbar("New Notification", "notification");
           // if (message.data['_id'] != null) {
           //   Navigator.of(context).push(
           //     MaterialPageRoute(
@@ -126,10 +120,10 @@ class _MyAppState extends State<MyApp> {
     MyApp.preload();
   }
 
-  // void notificationTapBackground() =>
-  //     Notify.onNotification.stream.listen(onClickNotification);
-  // void onClickNotification(String? payload) => Navigator.push(
-  //     context, MaterialPageRoute(builder: (context) => LoginScreen()));
+  void notificationTapBackground() =>
+      Notify.onNotification.stream.listen(onClickNotification);
+  void onClickNotification(String? payload) => Navigator.push(
+      context, MaterialPageRoute(builder: (context) => LoginScreen()));
   bool isLogin = UserSharePreferences.getLoginStts();
 
   @override

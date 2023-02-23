@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
+import 'package:rosterinsight/MainComponents/sharePreferences.dart';
 import 'package:rosterinsight/screens/NavigationScreens/MyNavigationScreen.dart';
+import 'package:rosterinsight/services/Location_Service.dart';
 import 'package:skeletons/skeletons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
@@ -125,6 +127,95 @@ class _HomeScreenState extends State<HomeScreen> {
     super.dispose();
   }
 
+// Define TextEditingController to get text from TextFields
+
+// Function to show alert box with two text fields
+  Future<bool> _showDialog(Booking booking) async {
+    bool isLoading = false;
+    TextEditingController _textFieldController1 = TextEditingController();
+    TextEditingController _textFieldController2 = TextEditingController();
+    bool isValidUser = false;
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Enter your information'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              TextField(
+                controller: _textFieldController1,
+                decoration: InputDecoration(
+                  labelText: 'Site ID',
+                ),
+              ),
+              TextField(
+                controller: _textFieldController2,
+                decoration: InputDecoration(
+                  labelText: 'Employee Code',
+                ),
+              ),
+            ],
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: isLoading
+                  ? Center(
+                      child: CircularProgressIndicator(),
+                    )
+                  : Text('Submit'),
+              onPressed: () async {
+                // Do something with the text entered in the text fields
+                // String _siteId = (_textFieldController1.text);
+                setState(() {
+                  isLoading = true;
+                });
+                int _siteId = int.parse(_textFieldController1.text);
+                String employeecode = _textFieldController2.text;
+                isValidUser = _siteId == booking.siteID &&
+                    employeecode == UserSharePreferences.getEmployeeId();
+                if (isValidUser) {
+                  isValidUser = false;
+                  double distance = 0;
+
+                  await LocationApi.getCurrentLocation();
+
+                  await LocationApi.getDestinationLocation(booking.postCode!);
+                  distance = LocationApi.calculateDistance();
+                  if (distance <= 200) {
+                    isValidUser = true;
+                  } else {
+                    Get.rawSnackbar(
+                      snackPosition: SnackPosition.TOP,
+                      isDismissible: true,
+                      snackStyle: SnackStyle.GROUNDED,
+                      message: 'Please take your device in working area',
+                      // borderRadius: 10,
+                      // colorText: Colors.white,
+                      backgroundColor: failColor,
+                      icon: const Icon(Icons.add_alert),
+                    );
+                  }
+                }
+                setState(() {
+                  isLoading = false;
+                });
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+    return isValidUser;
+  }
+
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -172,16 +263,22 @@ class _HomeScreenState extends State<HomeScreen> {
                             isNextBooking: true,
                             employeeDetail: booking.first,
                             bookOnFunction: () async {
-                              String book = await ApiCall.apiForMarkOnBookingOnOff(
-                                  bookOnStts: booking.first.bookOnStts! + 1,
-                                  bookingId: booking.first.bookingId,
-                                  startDate:
-                                      '${DateFormat('yyyy-MM-dd').format(DateFormat('dd/MM/yyyy').parse(booking.first.sdate!))}T${booking.first.startTime}:00');
+                              Booking currentBooking = booking.first;
+                              bool isValid = await _showDialog(currentBooking);
+                              if (isValid) {
+                                String book =
+                                    await ApiCall.apiForMarkOnBookingOnOff(
+                                        bookOnStts:
+                                            currentBooking.bookOnStts! + 1,
+                                        bookingId: currentBooking.bookingId,
+                                        startDate:
+                                            '${DateFormat('yyyy-MM-dd').format(DateFormat('dd/MM/yyyy').parse(booking.first.sdate!))}T${booking.first.startTime}:00');
 
-                              bool stts = await exceptionSnackBar(book);
-                              if (stts) {
-                                // ignore: use_build_context_synchronously
-                                build(context);
+                                bool stts = await exceptionSnackBar(book);
+                                if (stts) {
+                                  // ignore: use_build_context_synchronously
+                                  build(context);
+                                }
                               }
                             })
                         : Container(),

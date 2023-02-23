@@ -10,12 +10,15 @@ class UserSharePreferences {
   static const eId = "EmployeeId";
   static const bId = "BusinessId";
   static const pass = "Password";
+  static const deviceToken = "Device Token";
   static Future logoutEmployee() async {
-    // await UserSharePreferences.setBusinessId(0);
-    // await UserSharePreferences.setEmployeeId("0000");
+    await UserSharePreferences.setBusinessId(0);
+    await UserSharePreferences.setEmployeeId("0000");
     await UserSharePreferences.setLoginStts(false);
-    // await UserSharePreferences.setName("N/A");
-    // await UserSharePreferences.setName("N/A");
+    await UserSharePreferences.setName("");
+    await UserSharePreferences.setEmail("");
+    await UserSharePreferences.setPassword("");
+    await UserSharePreferences.setDeviceToken("");
   }
 
   static Future init() async => prefs = await SharedPreferences.getInstance();
@@ -24,6 +27,9 @@ class UserSharePreferences {
   static String getEmployeeId() => prefs.getString(eId) ?? "0002";
   static Future setBusinessId(int id) async => await prefs.setInt(bId, id);
   static int getBusinessId() => prefs.getInt(bId) ?? 1;
+  static Future setDeviceToken(String token) async =>
+      await prefs.setString(deviceToken, token);
+  static String getDeviceToken() => prefs.getString(deviceToken) ?? "";
   static Future setName(String tName) async =>
       await prefs.setString(name, tName);
   static String getName() => prefs.getString(name) ?? "Ahsan";

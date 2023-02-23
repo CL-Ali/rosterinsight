@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 // import 'package:rosterinsight/screens/FaceDetection/FaceDetection.dart';
 import 'package:rosterinsight/MainComponents/SignatureScreen.dart';
@@ -8,6 +9,7 @@ import 'package:rosterinsight/MainComponents/sharePreferences.dart';
 import 'package:rosterinsight/screens/LoginScreen/LoginScreen.dart';
 import 'package:rosterinsight/screens/RegistrationScreen/RegisterationScreen.dart';
 import 'package:rosterinsight/screens/voicecall/VideoCallScreen.dart';
+import 'package:rosterinsight/services/TokenService.dart';
 
 class MyDrawer extends StatefulWidget {
   const MyDrawer({super.key});
@@ -17,6 +19,22 @@ class MyDrawer extends StatefulWidget {
 }
 
 class _MyDrawerState extends State<MyDrawer> {
+  String token = '';
+  preload() async {
+    await TokenApi.requestPermission();
+    token = await TokenApi.getTokenMethode();
+    setState(() {
+      token = token;
+    });
+  }
+
+  @override
+  void initState() {
+    token = UserSharePreferences.getDeviceToken();
+    if (token.isEmpty || token == '') preload();
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
@@ -64,6 +82,22 @@ class _MyDrawerState extends State<MyDrawer> {
         //     children: const [Icon(CupertinoIcons.person), Text(" login")],
         //   ),
         // ),
+        MaterialButton(
+          onPressed: token.isEmpty || token == ''
+              ? null
+              : () async {
+                  if (token.isNotEmpty && token != '') {
+                    await Clipboard.setData(ClipboardData(text: token))
+                        .then((_) {
+                      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text("Device Token copied to clipboard")));
+                    });
+                  }
+                },
+          child: Row(
+            children: const [Icon(Icons.copy), Text("Copy device Token")],
+          ),
+        ),
         MaterialButton(
           onPressed: () {
             // Get.to(VoiceCallScreen());

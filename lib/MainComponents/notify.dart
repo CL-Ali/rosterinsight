@@ -13,12 +13,14 @@ class Notify {
   static Future initialize(
       FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin,
       {bool isScheduled = false}) async {
+    var iosInitialize = DarwinInitializationSettings();
     var linuxInitialize =
         LinuxInitializationSettings(defaultActionName: 'test');
     var androidInitialize =
         new AndroidInitializationSettings('mipmap/ic_launcher');
     var initializationsSettings = InitializationSettings(
       android: androidInitialize,
+      iOS: iosInitialize,
       linux: linuxInitialize,
     );
     await flutterLocalNotificationsPlugin.initialize(
@@ -45,10 +47,15 @@ class Notify {
       importance: Importance.max,
       priority: Priority.high,
     );
-
-    var not = NotificationDetails(
-      android: androidPlatformChannelSpecifics,
+    DarwinNotificationDetails iosPlatformChannelSpecifics =
+        DarwinNotificationDetails(
+      subtitle: 'rosterinsight',
+      presentSound: true,
+      interruptionLevel: InterruptionLevel.critical,
     );
+    var not = NotificationDetails(
+        android: androidPlatformChannelSpecifics,
+        iOS: iosPlatformChannelSpecifics);
     await fln.show(
       0,
       title,

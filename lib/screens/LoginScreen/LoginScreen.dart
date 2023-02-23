@@ -11,6 +11,7 @@ import 'package:rosterinsight/screens/NavigationScreens/BookingScreen/HomeScreen
 import 'package:rosterinsight/screens/NavigationScreens/MyNavigationScreen.dart';
 import 'package:rosterinsight/screens/RegistrationScreen/RegisterationScreen.dart';
 import 'package:rosterinsight/services/Api_Call_Service.dart';
+import 'package:rosterinsight/services/TokenService.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -47,66 +48,6 @@ class _LoginScreenState extends State<LoginScreen> {
     _employeeID.dispose();
     _password.dispose();
     super.dispose();
-  }
-
-  requestPermission() async {
-    FirebaseMessaging messaging = FirebaseMessaging.instance;
-    NotificationSettings settings = await messaging.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
-    if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      print('User granted Permission');
-    } else if (settings.authorizationStatus ==
-        AuthorizationStatus.provisional) {
-      print('User granted provisional Permission');
-    } else {
-      print('User is Not granted ');
-    }
-  }
-
-  Future<String> getTokenMethode() async {
-    try {
-      var auth = AuthorizationStatus.authorized;
-      print(auth);
-      var messaging = FirebaseMessaging.instance;
-
-      var token =
-          // "ali";
-          await messaging.getToken() ?? '';
-
-      // Get.rawSnackbar(
-      //   snackPosition: SnackPosition.TOP,
-      //   isDismissible: true,
-      //   snackStyle: SnackStyle.GROUNDED,
-      //   message: token,
-      //   // borderRadius: 10,
-      //   // colorText: Colors.white,
-      //   backgroundColor: successColor,
-      //   icon: const Icon(Icons.add_alert),
-      // );
-      print(token);
-      return token;
-    } on FirebaseException catch (e) {
-      print(e);
-
-      Get.rawSnackbar(
-        snackPosition: SnackPosition.TOP,
-        isDismissible: true,
-        snackStyle: SnackStyle.GROUNDED,
-        message: e.toString(),
-        // borderRadius: 10,
-        // colorText: Colors.white,
-        backgroundColor: failColor,
-        icon: const Icon(Icons.add_alert),
-      );
-      return '';
-    }
   }
 
   @override
@@ -253,38 +194,48 @@ class _LoginScreenState extends State<LoginScreen> {
                                         setState(() {
                                           isLoginUserValid = false;
                                         });
-                                        if (isValid) {
-                                          var token;
-
-                                          await requestPermission();
-                                          token = await getTokenMethode();
-
-                                          await UserSharePreferences
-                                              .setBusinessId(businessID);
-                                          await UserSharePreferences
-                                              .setEmployeeId(employeeID);
-                                          Get.to(MyNavigationScreen());
-                                        }
+                                        Get.to(MyNavigationScreen());
                                       } else {
                                         String isValid =
                                             await ApiCall.apiForLogin(
                                                 employeeId: employeeID,
                                                 businessId: businessID,
                                                 password: password);
+
                                         bool response =
                                             await exceptionSnackBar(isValid);
                                         setState(() {
                                           isLoginUserValid = false;
                                         });
                                         if (response) {
-                                          await UserSharePreferences
-                                              .setBusinessId(businessID);
-                                          await UserSharePreferences
-                                              .setEmployeeId(employeeID);
+                                          String token;
 
-                                          Get.to(LoginScreen.isDirectLogin
-                                              ? MyNavigationScreen()
-                                              : ChangePasswordScreen());
+                                          await TokenApi.requestPermission();
+                                          token =
+                                              await TokenApi.getTokenMethode();
+                                          if (token != '' && token.isNotEmpty) {
+                                            await UserSharePreferences
+                                                .setBusinessId(businessID);
+                                            await UserSharePreferences
+                                                .setEmployeeId(employeeID);
+                                            String response =
+                                                await ApiCall.apiForUpdateToken(
+                                                    token);
+                                            bool isTokenSend =
+                                                await exceptionSnackBar(
+                                                    response);
+                                            if (isTokenSend) {
+                                              await UserSharePreferences
+                                                  .setDeviceToken(token);
+                                              if (LoginScreen.isDirectLogin) {
+                                                UserSharePreferences
+                                                    .setPassword(password);
+                                                Get.to(MyNavigationScreen());
+                                              } else {
+                                                Get.to(ChangePasswordScreen());
+                                              }
+                                            }
+                                          }
                                         }
                                       }
                                     },

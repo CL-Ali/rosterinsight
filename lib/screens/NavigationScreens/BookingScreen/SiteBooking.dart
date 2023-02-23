@@ -128,9 +128,9 @@ class _SiteBookingScreenState extends State<SiteBookingScreen> {
         }
       }
     }
-    setState(() {
-      isFilter = true;
-    });
+    // setState(() {
+    //   isFilter = true;
+    // });
     return tEmployeeDetail;
   }
 
@@ -208,7 +208,7 @@ class _SiteBookingScreenState extends State<SiteBookingScreen> {
         makeListbyGrp(tList);
         forSearching(booking);
         print(booking);
-        booking;
+        booking = booking;
         isAllDataGet = true;
       }
 

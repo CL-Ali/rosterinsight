@@ -167,15 +167,17 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                                         String isValid =
                                             await ApiCall.apiForChangePassword(
                                                 password: password);
-                                        bool response =
+                                        bool isValidResponse =
                                             await exceptionSnackBar(isValid);
-                                        if (response) {
+                                        if (isValidResponse) {
                                           await UserSharePreferences
                                               .setLoginStts(true);
 
                                           setState(() {
                                             isPasswordChange = false;
                                           });
+                                          await UserSharePreferences
+                                              .setPassword(password);
                                           Get.to(MyNavigationScreen());
                                         }
                                       }
